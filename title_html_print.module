@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * Implements hook_form_FORM_ID_alter()
+ */
+function title_html_print_form_print_mail_form_alter(&$form, &$form_state, $form_id) {
+  if (!empty($form['fld_title'])) {
+    $path = $form['path']['#value'];
+    $nid = preg_replace('!^node/!', '', $path);
+    if (ctype_digit($nid)) {
+      $node = node_load($nid);
+      $title_field_instance = title_field_replacement_get_label_field('node', $node->type);
+      if (!empty($title_field_instance)) {
+        // Get title field value
+        $items = field_get_items('node', $node, $title_field_instance['field_name']);
+        // Get renderable value having correctly formatter as per text format, if any.
+        $title = field_view_value('node', $node, $title_field_instance['field_name'], $items[0]);
+        // Set it as node title.
+        $title = render($title);
+        $form['fld_title']['#markup'] = l($title, $path, array('attributes' => array('title' => t('View page')), 'query' => $form['query']['#value'], 'html' => TRUE));
+      }
+    }
+  }
+}

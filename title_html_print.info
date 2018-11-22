@@ -1,0 +1,3 @@
+name = Title HTML Print
+description = Integrate Print module with Title HTML module to accommodate HTML tags in node titles.
+core = 7.x
