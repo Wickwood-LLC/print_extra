@@ -1,3 +1,3 @@
-name = Title HTML Print
-description = Integrate Print module with Title HTML module to accommodate HTML tags in node titles.
+name = Print Extra
+description = Integrate Print module with Title HTML module to accommodate HTML tags in node titles and make it work with MimeMail module.
 core = 7.x

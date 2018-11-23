@@ -3,7 +3,7 @@
 /**
  * Implements hook_form_FORM_ID_alter()
  */
-function title_html_print_form_print_mail_form_alter(&$form, &$form_state, $form_id) {
+function print_extra_form_print_mail_form_alter(&$form, &$form_state, $form_id) {
   if (!empty($form['fld_title'])) {
     $path = $form['path']['#value'];
     $nid = preg_replace('!^node/!', '', $path);
@@ -27,7 +27,7 @@ function title_html_print_form_print_mail_form_alter(&$form, &$form_state, $form
 /**
  * Implements hook_mail_alter()
  */
-function title_html_print_mail_alter(&$message) {
+function print_extra_mail_alter(&$message) {
   if ($message['id'] == 'print_mail_sendlink') {
     if (module_exists('mimemail' ) && !class_exists('Mail_mime')) {
       // Rest body
