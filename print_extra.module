@@ -40,3 +40,22 @@ function print_extra_mail_alter(&$message) {
     }
   }
 }
+
+/**
+ * Implements hook_widgets_element_info().
+ */
+function print_extra_widgets_element_info() {
+  $elements = array(
+    'print-printmail' => array(
+      'label' => t('Print email a friend button'),
+      'group' => t('Print'),
+      'template' => '<a class="" href=""><img src="[?icon-path=[socialmedia:sm-email_icon-path]?]" alt="e-mail icon XXX" ></a>',
+      'view callback' => 'print_extra_printmail_element_view',
+    ),
+  );
+  return $elements;
+}
+
+function print_extra_printmail_element_view($element) {
+  return str_replace('href=""', 'href="' . url('printmail/' . request_path()) . '"', $element['template']);
+}
