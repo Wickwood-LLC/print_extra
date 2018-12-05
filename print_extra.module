@@ -57,5 +57,5 @@ function print_extra_widgets_element_info() {
 }
 
 function print_extra_printmail_element_view($element) {
-  return str_replace('href=""', 'href="' . url('printmail/' . request_path()) . '"', $element['template']);
+  return str_replace('href=""', 'href="' . url('printmail/' . drupal_lookup_path('alias', current_path())) . '"', $element['template']);
 }
