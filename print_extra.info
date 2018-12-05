@@ -1,3 +1,5 @@
 name = Print Extra
 description = Integrate Print module with Title HTML module to accommodate HTML tags in node titles and make it work with MimeMail module.
 core = 7.x
+
+dependencies[] = print
