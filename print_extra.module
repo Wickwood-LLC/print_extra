@@ -1,6 +1,19 @@
 <?php
 
 /**
+ * Implements hook_menu_alter()
+ */
+function print_extra_menu_alter(&$items) {
+  if (module_exists('print_mail')) {
+    $link = print_mail_print_link();
+    if (isset($items[$link['path']])) {
+      // Set menu title to custom entered value if user configured it for the "Send by email" link.
+      $items[$link['path']]['title'] = variable_get('print_' . $link['format'] . '_link_text', $link['text']);
+    }
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter()
  */
 function print_extra_form_print_mail_form_alter(&$form, &$form_state, $form_id) {
@@ -22,6 +35,15 @@ function print_extra_form_print_mail_form_alter(&$form, &$form_state, $form_id) 
       }
     }
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter()
+ */
+function print_extra_form_print_mail_settings_alter(&$form, &$form_state, $form_id) {
+  // 'print_mail_link_text' is now being used for menu title by print_extra_menu_alter().
+  // Let admin know that cache need to be cleared to reflect the change on send by email page.
+  $form['settings']['link_text']['print_mail_link_text']['#description'] .= t(' Clear menu cache to make it reflect on "Send by email" page title.');
 }
 
 /**
