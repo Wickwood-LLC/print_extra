@@ -1,6 +1,24 @@
 <?php
 
 /**
+ * Implements hook_menu().
+ */
+function print_extra_menu() {
+  $items = array();
+  $items['admin/config/user-interface/print/extra'] = array(
+    'title' => 'Extra Settings',
+    'description' => 'Settings for the extra functionalities for all the print sub-modules.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('print_extra_settings'),
+    'access arguments'  => array('administer print'),
+    'weight' => 15,
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'print_extra.admin.inc',
+  );
+  return $items;
+}
+
+/**
  * Implements hook_menu_alter()
  */
 function print_extra_menu_alter(&$items) {
