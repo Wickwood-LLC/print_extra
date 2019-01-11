@@ -101,43 +101,46 @@ function print_extra_printmail_element_view($element) {
 }
 
 /**
- * Implements hook_preprocess_HOOK()
+ * Implements hook_print_footer_url_alter()
  */
-function print_extra_preprocess_print_url_list(&$variables) {
-  global $base_url;
-  $base_urls = array($base_url);
+function print_extra_print_footer_url_alter(&$url) {
+  static $pages_to_exclude = NULL;
+  static $base_urls = NULL;
 
-  $pages_to_exclude = preg_split ('/$\R?^/m', variable_get('print_extra_url_list_filter', ''));
-  $urls = &drupal_static('_print_friendly_urls', array());
-  // Find URL scheme. HTTP or HTTPS?
-  preg_match('~^(https?)://~', $base_url, $match);
-  // Prepare secure or non-secure alternative.
-  if ($match[1] == 'http') {
-    $base_urls[] = preg_replace('~^http~', 'https', $base_url);
-  }
-  elseif ($match[1] == 'https') {
-    $base_urls[] = preg_replace('~^https~', 'http', $base_url);
+  if (!$pages_to_exclude) {
+    global $base_url;
+
+    $pages_to_exclude = preg_split ('/$\R?^/m', variable_get('print_extra_url_list_filter', ''));
+
+    $base_urls = array($base_url);
+
+    // Find URL scheme. HTTP or HTTPS?
+    preg_match('~^(https?)://~', $base_url, $match);
+    // Prepare secure or non-secure alternative.
+    if ($match[1] == 'http') {
+      $base_urls[] = preg_replace('~^http~', 'https', $base_url);
+    }
+    elseif ($match[1] == 'https') {
+      $base_urls[] = preg_replace('~^https~', 'http', $base_url);
+    }
+    module_load_include('inc', 'print_extra', 'includes/print_extra.util');
   }
 
-  $internal = array();
-  module_load_include('inc', 'print_extra', 'includes/print_extra.util');
-  foreach ($urls as $index => $url) {
-    $internal_path = NULL;
-    // Find internal path fom absolute path.
-    if (($pos = strpos($url, $base_urls[0])) === 0) {
-      $internal_path = substr($url, strlen($base_urls[0]));
-    }
-    elseif ( ( $pos = strpos($url, $base_urls[1])) === 0) {
-      $internal_path = substr($url, strlen($base_urls[1]));
-    }
-    if ($internal_path) {
-      // Remove leading slash.
-      $internal_path = ltrim($internal_path, '/');
-      if (print_extra_match_path($internal_path, $pages_to_exclude)) {
-        // It matches with configured patterns to be excluded.
-        // Thus remove URL from list.
-        unset($urls[$index]);
-      }
+  $internal_path = NULL;
+  // Find internal path fom absolute path.
+  if (($pos = strpos($url, $base_urls[0])) === 0) {
+    $internal_path = substr($url, strlen($base_urls[0]));
+  }
+  elseif ( ( $pos = strpos($url, $base_urls[1])) === 0) {
+    $internal_path = substr($url, strlen($base_urls[1]));
+  }
+  if ($internal_path) {
+    // Remove leading slash.
+    $internal_path = ltrim($internal_path, '/');
+    if (print_extra_match_path($internal_path, $pages_to_exclude)) {
+      // It matches with configured patterns to be excluded.
+      // Thus remove URL from list.
+      $url = NULL;
     }
   }
 }
